@@ -24,7 +24,7 @@ auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 api = API(auth)
 
 
-def generate_composition(happy=True, energetic=False, text='Hola em dic Gerard, i tinc por'):
+def generate_composition(happy=True, energetic=False, text='Hola em dic Gerard'):
     t = Track()
     t.augment()
     if happy:
