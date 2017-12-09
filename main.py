@@ -42,7 +42,7 @@ def generate_composition(happy=True, energetic=False, text='Hola em dic Gerard, 
     else:
         ns = [scale[ord(i) % len(scale)] if i != ' ' else None for i in text]
         amount = int(20 * (len(text) / 280.0))
-        ns = random.sample(ns,amount)
+        ns = ns[:amount]
         for note in ns:
             t.add_notes(note)
 
