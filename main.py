@@ -65,6 +65,24 @@ def random_line(afile):
     return line
 
 
+def get_random_tweet(line):
+    filename = os.path.join(BASE_DIR, line + '.json')
+    with open(filename, 'r') as f:
+        tweet = json.loads(random_line(f))['text']
+        tweet = ' '.join(w for w in tweet.lower().split() if 'http' not in w)
+    return tweet
+
+
+def get_tweets_user(line):
+    filename = os.path.join(BASE_DIR, line + '.json')
+    if not os.path.isfile(filename):
+        with open(filename, 'w') as f:
+            for tweet in tweepy.Cursor(api.user_timeline, id=line, count=200).items():
+                json.dump(tweet._json, f)
+                f.write("\n")
+    return filename
+
+
 class SonomeCmd(cmd.Cmd):
     """Simple command processor example."""
     intro = 'Welcome to the Sonome interactive shell. Type help or ? to list commands.\nAuthor: @casassaez 2017'
@@ -80,33 +98,17 @@ class SonomeCmd(cmd.Cmd):
     def do_text(self, line):
         """text <text_to_analyze>\nCreate song for input text"""
         happy = is_text_happy(line)
-        if happy:
-            print('This is a happy text! :D')
-        else:
-            print('This is a sad text :(')
         c = generate_composition(happy=happy, text=line)
         fluidsynth.play_Composition(c, bpm=280 if happy else 150)
 
     def do_user(self, line):
         """user <twitter_user_to_analyze>\nGets a random tweet from specified user and creates song"""
-        filename = os.path.join(BASE_DIR, line + '.json')
-        if not os.path.isfile(filename):
-            with open(filename, 'w') as f:
-                for tweet in tweepy.Cursor(api.user_timeline, id=line, count=200).items():
-                    json.dump(tweet._json, f)
-                    f.write("\n")
-
-        with open(filename, 'r') as f:
-            tweet = json.loads(random_line(f))['text']
-            tweet = ' '.join(w for w in tweet.lower().split() if 'http' not in w)
-            happy = is_text_happy(tweet)
-            print(tweet)
-            if happy:
-                print('This is a happy text! :D')
-            else:
-                print('This is a sad text :(')
-            c = generate_composition(happy=happy, text=tweet)
-            fluidsynth.play_Composition(c, bpm=280 if happy else 150)
+        get_tweets_user(line)
+        tweet = get_random_tweet(line)
+        happy = is_text_happy(tweet)
+        print(tweet)
+        c = generate_composition(happy=happy, text=tweet)
+        fluidsynth.play_Composition(c, bpm=280 if happy else 150)
 
     def preloop(self):
         fluidsynth.init('choriumreva.sf2', "coreaudio")
