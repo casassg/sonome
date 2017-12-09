@@ -1,0 +1,4 @@
+.idea
+*.pyc
+env/
+casassaez.json
