@@ -1,5 +1,5 @@
 # Sonome
-Random melody generation from a text or from Twitter users
+Random melody generation from a text or from Twitter users. Developed as an assigment for CSCI 5839 at CU Boulder. It may be unstable, please fill issues if you find any errors :)
 
 ## Set up
 Requirements: python, virtualenv, [fluidsynth](http://www.fluidsynth.org/)
